@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2 } from "lucide-react";
+import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2, Mic, MicOff } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant" | "system" | "tool";
@@ -24,6 +24,45 @@ export default function Home() {
   const [toolCalls, setToolCalls] = useState<{function: string, arguments: string}[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Voice input state
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Initialize Web Speech API
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onresult = (event: any) => {
+          let transcript = "";
+          for (let i = 0; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          setInput(transcript);
+        };
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = () => setIsListening(false);
+
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const toggleListen = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      setInput("");
+      recognitionRef.current?.start();
+    }
+  };
 
   useEffect(() => {
     // Fetch investors for dropdown
@@ -138,7 +177,7 @@ export default function Home() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Sidebar / Observability */}
-      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl">
+      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl pt-6">
         <div className="p-6 border-b border-white/5 bg-gradient-to-br from-slate-800/40 to-slate-900/40">
           <h1 className="text-2xl font-bold flex items-center gap-3 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
             <Sparkles className="text-cyan-400 h-6 w-6" /> EquiTie
@@ -259,7 +298,7 @@ export default function Home() {
         )}
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 pt-24 md:p-10 md:pt-24 space-y-8 custom-scrollbar">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6 max-w-lg mx-auto text-center">
               <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-5 rounded-3xl border border-cyan-500/20 shadow-lg shadow-cyan-500/10 mb-4 animate-float">
@@ -338,17 +377,33 @@ export default function Home() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={selectedInvestor ? "Ask a question about the portfolio..." : "Select an investor first..."}
-              className="flex-1 px-6 py-4 rounded-2xl border border-white/10 bg-slate-800/90 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 shadow-inner text-base transition-all relative z-10"
+              placeholder={selectedInvestor ? (isListening ? "Listening..." : "Ask a question about the portfolio...") : "Select an investor first..."}
+              className={`flex-1 px-6 py-4 pr-24 rounded-2xl border ${isListening ? "border-cyan-500/50 bg-cyan-900/20 text-cyan-50" : "border-white/10 bg-slate-800/90 text-white"} placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 shadow-inner text-base transition-all relative z-10`}
               disabled={isLoading || !selectedInvestor}
             />
-            <button
-              type="submit"
-              disabled={isLoading || !selectedInvestor || !input.trim()}
-              className="absolute right-2 top-2 bottom-2 aspect-square bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-xl flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:grayscale transition-all shadow-lg z-20"
-            >
-              <Send className="h-5 w-5" />
-            </button>
+
+            <div className="absolute right-2 top-2 bottom-2 flex gap-2 z-20">
+              <button
+                type="button"
+                onClick={toggleListen}
+                disabled={isLoading || !selectedInvestor || !recognitionRef.current}
+                className={`aspect-square rounded-xl flex items-center justify-center transition-all shadow-md ${
+                  isListening
+                    ? "bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse hover:bg-red-500/30"
+                    : "bg-slate-700/50 text-slate-300 border border-white/5 hover:bg-slate-700 hover:text-white disabled:opacity-50 disabled:grayscale"
+                }`}
+                title={isListening ? "Stop listening" : "Start voice input"}
+              >
+                {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || !selectedInvestor || !input.trim()}
+                className="aspect-square bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-xl flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:grayscale transition-all shadow-lg"
+              >
+                <Send className="h-5 w-5" />
+              </button>
+            </div>
           </form>
           <div className="max-w-4xl mx-auto text-center mt-3">
             <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">
