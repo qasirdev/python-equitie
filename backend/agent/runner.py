@@ -49,17 +49,18 @@ async def run_agent_loop(
         loop_count += 1
 
         try:
+            tools: Any = AGENT_TOOLS
             response = await client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=current_messages,
-                tools=AGENT_TOOLS,
+                tools=tools,
                 stream=True,
             )
 
-            tool_calls = {}
+            tool_calls: Dict[int, Dict[str, Any]] = {}
             content = ""
 
-            async for chunk in response:
+            async for chunk in response:  # type: ignore[union-attr]
                 delta = chunk.choices[0].delta
 
                 # Yield content tokens directly
@@ -74,12 +75,14 @@ async def run_agent_loop(
                             tool_calls[tc.index] = {
                                 "id": tc.id,
                                 "function": {
-                                    "name": tc.function.name,
-                                    "arguments": tc.function.arguments or "",
+                                    "name": tc.function.name if tc.function else "",
+                                    "arguments": tc.function.arguments
+                                    if tc.function and tc.function.arguments
+                                    else "",
                                 },
                             }
                         else:
-                            if tc.function.arguments:
+                            if tc.function and tc.function.arguments:
                                 tool_calls[tc.index]["function"]["arguments"] += (
                                     tc.function.arguments
                                 )
@@ -97,23 +100,23 @@ async def run_agent_loop(
                 "content": content if content else None,
                 "tool_calls": [
                     {
-                        "id": tc["id"],
+                        "id": tc_dict["id"],
                         "type": "function",
                         "function": {
-                            "name": tc["function"]["name"],
-                            "arguments": tc["function"]["arguments"],
+                            "name": tc_dict["function"]["name"],
+                            "arguments": tc_dict["function"]["arguments"],
                         },
                     }
-                    for tc in tool_calls_list
+                    for tc_dict in tool_calls_list
                 ],
             }
             current_messages.append(assistant_msg)
 
             # Execute Tools
-            for tc in tool_calls_list:
-                func_name = tc["function"]["name"]
-                args_str = tc["function"]["arguments"]
-                tool_call_id = tc["id"]
+            for tc_dict in tool_calls_list:
+                func_name = tc_dict["function"]["name"]
+                args_str = tc_dict["function"]["arguments"]
+                tool_call_id = tc_dict["id"]
 
                 logger.info("Executing tool", function=func_name, arguments=args_str)
 
@@ -129,7 +132,7 @@ async def run_agent_loop(
                         args["investor_id"] = investor_id
 
                     if func_name in TOOLS_REGISTRY:
-                        result = TOOLS_REGISTRY[func_name](**args)
+                        result = TOOLS_REGISTRY[func_name](**args)  # type: ignore[operator]
                     else:
                         result = {"error": f"Unknown tool: {func_name}"}
                 except Exception as e:

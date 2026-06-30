@@ -26,15 +26,15 @@ def health_check() -> dict[str, str]:
 
 
 @router.get("/investors")
-def get_investors() -> list[dict[str, str]]:
+def get_investors() -> list[dict[str, Any]]:
     investors = data_store.investors
     if investors.empty:
         return []
-    return investors[["investor_id", "investor_name"]].to_dict(orient="records")
+    return investors[["investor_id", "investor_name"]].to_dict(orient="records")  # type: ignore[return-value]
 
 
 @router.post("/chat")
-async def chat_endpoint(req: ChatRequest):
+async def chat_endpoint(req: ChatRequest) -> StreamingResponse:
     # Basic security check on the latest user message
     latest_msg = next(
         (m for m in reversed(req.messages) if m.get("role") == "user"), None

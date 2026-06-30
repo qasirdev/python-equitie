@@ -43,4 +43,4 @@ known-first-party = ["backend"]
 
 [tool.mypy]
 ignore_missing_imports = true
-disable_error_code = ["import-untyped", "no-any-return", "import-not-found"]
+disable_error_code = ["import-untyped", "no-any-return", "import-not-found", "unused-ignore"]

@@ -84,12 +84,12 @@ def get_obligations(investor_id: str) -> Dict[str, Any]:
     fees = data_store.fees
     calls = data_store.capital_calls
 
-    inv_fees = (
+    inv_fees: Any = (
         fees[(fees["investor_id"] == investor_id) & (fees["status"] == "overdue")]
         if not fees.empty
         else []
     )
-    inv_calls = (
+    inv_calls: Any = (
         calls[(calls["investor_id"] == investor_id) & (calls["status"] == "upcoming")]
         if not calls.empty
         else []
@@ -110,7 +110,7 @@ def get_realised_outcomes(investor_id: str) -> List[Dict[str, Any]]:
     if distributions.empty:
         return []
     inv_dists = distributions[distributions["investor_id"] == investor_id]
-    return inv_dists.to_dict(orient="records")
+    return inv_dists.to_dict(orient="records")  # type: ignore[return-value]
 
 
 def get_fees_schedule(investor_id: str, deal_id: str) -> Dict[str, Any]:
@@ -136,7 +136,7 @@ def get_valuation_history(deal_id: str) -> List[Dict[str, Any]]:
     deal_vals = valuations[valuations["deal_id"] == deal_id].sort_values(
         "valuation_date"
     )
-    return deal_vals.to_dict(orient="records")
+    return deal_vals.to_dict(orient="records")  # type: ignore[return-value]
 
 
 def get_account_statement(investor_id: str) -> List[Dict[str, Any]]:
@@ -144,7 +144,7 @@ def get_account_statement(investor_id: str) -> List[Dict[str, Any]]:
     if statements.empty:
         return []
     inv_stmt = statements[statements["investor_id"] == investor_id].sort_values("date")
-    return inv_stmt.to_dict(orient="records")
+    return inv_stmt.to_dict(orient="records")  # type: ignore[return-value]
 
 
 def resolve_entity(query: str, entity_type: str = "company") -> Dict[str, Any]:
@@ -152,7 +152,7 @@ def resolve_entity(query: str, entity_type: str = "company") -> Dict[str, Any]:
     if entity_type == "company" and not data_store.portfolio_companies.empty:
         comps = data_store.portfolio_companies
         matches = comps[comps["company_name"].str.contains(query, case=False, na=False)]
-        return matches.to_dict(orient="records")
+        return matches.to_dict(orient="records")  # type: ignore[return-value]
     return {"error": "No matching entity found"}
 
 
