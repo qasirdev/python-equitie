@@ -3,9 +3,7 @@
 The EquiTie AI Portfolio Assistant is a unified monorepo for querying investor portfolio data through an AI agent.
 
 ## Demo
-Watch the prototype in action:
-
-<video src="./docs/guidence/equitie-recording.mov" width="100%" controls autoplay loop muted></video>
+Watch the prototype in action: [Click here to view equitie-recording.mov](https://github.com/qasirdev/python-equitie/raw/main/docs/guidence/equitie-recording.mov)
 
 ## Architecture
 
