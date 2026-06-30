@@ -25,16 +25,17 @@ This document serves as the absolute source of truth for execution standards and
 1. **Plan Mode**: Any task with 3 or more steps, or involving architectural decisions, must begin with a written plan.
 2. **Task Logging**: The plan must be written to `docs/tasks/todo.md` before any implementation code is touched.
 3. **PR Code Review Gate**: This file `.agent/rules/review.mdc` acts as your PR Code Review Agent. Whenever the coding or refactor agents finish a task, this Review agent will now automatically trigger to audit the diff for complexity, security, and architectural violations before the task is marked as "Done".
-4. **Verification Gate**: Do not proceed to the next step on `docs/tasks/todo.md` until the current step is proven to work. **Backend tasks** must pass this command before marking done:
+4. **Verification Gate**: Do not proceed to the next step on `docs/tasks/todo.md` until the current step is proven to work locally. **Backend tasks** must pass this command before marking done:
 
    ```bash
-   uv run ruff check backend && uv run ruff format backend && uv run mypy backend && uv run pytest
+   uv run ruff check backend && uv run ruff format backend && uv run mypy backend && uv run pytest backend
    ```
 
    If Ruff reports `I001` (import block unsorted), run `uv run ruff check backend --fix` — keep imports at module top level, never inline inside functions.
-4. **Lessons Review**: At the start of every session, read `docs/tasks/lessons.md` to avoid repeating past mistakes.
-5. **Correction Loop**: If a mistake is made or corrected by a user, immediately update `docs/tasks/lessons.md` with the root cause and a new rule.
-6. **Done Gate**: Never mark a task as complete without providing proof (e.g., test output, build success logs, diffs).
+5. **PR Pipeline Compliance**: All Pull Requests must use the `.github/pull_request_template.md` and pass the parallel CI pipeline (backend, frontend, docker, workflow-docs) defined in `.github/workflows/ci.yml`.
+6. **Lessons Review**: At the start of every session, read `docs/tasks/lessons.md` to avoid repeating past mistakes.
+7. **Correction Loop**: If a mistake is made or corrected by a user, immediately update `docs/tasks/lessons.md` with the root cause and a new rule.
+8. **Done Gate**: Never mark a task as complete without providing proof (e.g., test output, build success logs, diffs).
 7. **Elegance Check**: Before finalizing a complex change, pause and ask: *"Is there a more elegant, standard way to do this?"*
 8. **Bug Fix Autonomy**: When encountering a bug during development, analyze the stack trace or logs and fix it autonomously without requiring human hand-holding.
 9. **Reference Standards**: Always consult the reference projects `../../daily-briefing` and `../../job-discovery` for architectural decisions, coding standards, and best practices before writing new code.
@@ -234,7 +235,7 @@ When context usage reaches ~75%, checkpoint progress and prepare for session han
 
 ## Resume Command
 \`\`\`
-Continue implementing epic DB-E{n} from task DB-{nnn}. 
+Continue implementing epic DB-E{n} from task DB-{nnn}.
 Read docs/tasks/checkpoint.md for full context.
 Branch: epic/E{n}-{description}
 \`\`\`
