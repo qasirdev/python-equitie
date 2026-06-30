@@ -28,8 +28,9 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Copy backend
+# Copy backend and metadata files needed for hatchling build
 COPY backend/ ./backend/
+COPY README.md ./
 # Sync the project itself (non-editable for production)
 RUN uv sync --frozen --no-dev --no-editable
 
