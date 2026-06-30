@@ -1,0 +1,52 @@
+{
+  "EQ-E2": [
+    {
+      "Issue id": "EQ-011",
+      "Summary": "CSV Loader",
+      "Issue Type": "Task",
+      "Description": "Load all 10 DataFrames at startup via lifespan context manager: investors.csv, portfolio_companies.csv, deals.csv, allocations.csv, valuations.csv, capital_calls.csv, fees.csv, distributions.csv, statement_lines.csv, fx_rates.csv.\n\nEDGE CASES:\n- Handle missing files safely.",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    },
+    {
+      "Issue id": "EQ-012",
+      "Summary": "Pydantic Schemas",
+      "Issue Type": "Task",
+      "Description": "Create strongly typed schemas for all 10 tables.",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    },
+    {
+      "Issue id": "EQ-013",
+      "Summary": "FX Module",
+      "Issue Type": "Task",
+      "Description": "Implement FX conversion to reporting currency from investors.csv using fx_rates.csv.\n\nEDGE CASES:\n- Explicit Rule: Treat the report date as 25 June 2026 for anything upcoming or current.\n- Must convert statement_lines.csv which are in deal currency to the reporting currency.",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    },
+    {
+      "Issue id": "EQ-014",
+      "Summary": "Metrics Module",
+      "Issue Type": "Task",
+      "Description": "Calculate MOIC, DPI, RVPI, current value, and cost basis using strictly deterministic python math.\n\nEDGE CASES:\n- Write-offs and down rounds (valuations falling).\n- Holding the same company across multiple rounds (multiple SPVs).\n- Partial capital calls (deal-level partial-call structure).\n- Exits (secondary sales, gross and net of performance fee).\n- Apply per-investor share-price discounts.\n- Valuations history: ensure the latest mark is strictly used as the current valuation.\n- Statement lines: handle signed values correctly (positive/negative flows).",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    },
+    {
+      "Issue id": "EQ-015",
+      "Summary": "Fees Module",
+      "Issue Type": "Task",
+      "Description": "Calculate effective rate vs deal standard schedule.\n\nEDGE CASES:\n- Apply per-investor fee_discount flag.",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    },
+    {
+      "Issue id": "EQ-016",
+      "Summary": "Personalisation Module",
+      "Issue Type": "Task",
+      "Description": "Build PersonalisationProfile context from age, tech_savviness, AND derived signals (how many deals they are in, most-invested sectors).\n\nEDGE CASES:\n- Adjust tone, depth, and framing based on age and tech-savviness (explain MOIC/carry for older/less-technical, use concise data-dense answers for sophisticated).\n- Reflect investor's portfolio shape (e.g., most-active sectors or concentration) instead of answering generically.\n- Must keep it professional and never patronising.\n- Personalisation changes tone, but underlying numbers MUST stay correct and identical for everyone.",
+      "Labels": "data,backend",
+      "Parent": "EQ-E2"
+    }
+  ]
+}

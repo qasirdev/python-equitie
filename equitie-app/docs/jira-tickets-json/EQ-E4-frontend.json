@@ -1,0 +1,60 @@
+{
+  "EQ-E4": [
+    {
+      "Issue id": "EQ-022",
+      "Summary": "Next.js Scaffold",
+      "Issue Type": "Task",
+      "Description": "Init App Router with Tailwind 4 on port 3015.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-023",
+      "Summary": "Portfolio Chat UI",
+      "Issue Type": "Task",
+      "Description": "Implement chat with SSE and markdown rendering.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-024",
+      "Summary": "Observability Badge",
+      "Issue Type": "Task",
+      "Description": "Display tokens, cost, ms, and tool calls. Shows explicit source row citations as requested by the rubric.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-025",
+      "Summary": "UI Components",
+      "Issue Type": "Task",
+      "Description": "Implement investor selector (simulating authentication state) and starter prompts.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-026",
+      "Summary": "SSE Proxy",
+      "Issue Type": "Task",
+      "Description": "Implement Next.js proxy route to FastAPI.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-027",
+      "Summary": "Vercel Deploy",
+      "Issue Type": "Task",
+      "Description": "Push to Vercel and configure secrets.",
+      "Labels": "frontend",
+      "Parent": "EQ-E4"
+    },
+    {
+      "Issue id": "EQ-028",
+      "Summary": "Deliverables",
+      "Issue Type": "Task",
+      "Description": "Generate final submission documentation.\n\nEDGE CASES:\n- Ensure README.md includes architecture, models used, assumptions, limitations.\n- Ensure ai-workflow.md answers the 5 required questions.\n- Ensure proposal-production-saas.md fulfills the Build Roadmap requirement.\n- Walkthrough video script.",
+      "Labels": "frontend,docs",
+      "Parent": "EQ-E4"
+    }
+  ]
+}

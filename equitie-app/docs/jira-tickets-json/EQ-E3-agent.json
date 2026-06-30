@@ -1,0 +1,44 @@
+{
+  "EQ-E3": [
+    {
+      "Issue id": "EQ-017",
+      "Summary": "Retrieval Tool Functions",
+      "Issue Type": "Task",
+      "Description": "Create deterministic OpenAI function schemas for:\n1) Portfolio overview (holdings, current value, MOIC, committed vs contributed)\n2) Single position (current value, cost basis, share price paid across multiple rounds)\n3) Obligations (upcoming and overdue mgmt fees, upcoming capital calls)\n4) Realised outcomes (distributions, exits, net of carry/performance fee)\n5) Fees (deal standard schedule vs investor discount)\n6) Valuations (valuation history affecting investor MOIC)\n7) Account statement (plain language summary of capital contributions, fees, and distributions)\n8) Entity Resolver.\n\nEDGE CASES:\n- Strict typing for all inputs.\n- Handle similar company names via fuzzy match or explicit ID.",
+      "Labels": "agent,backend",
+      "Parent": "EQ-E3"
+    },
+    {
+      "Issue id": "EQ-018",
+      "Summary": "System Prompt",
+      "Issue Type": "Task",
+      "Description": "Create system prompt template injecting PersonalisationProfile.\n\nEDGE CASES:\n- Instruct LLM NEVER to perform financial math and strictly narrate tool outputs.\n- State that the user is an authenticated investor and the assistant must answer ONLY about that specific investor.\n- Personalisation changes tone/depth/framing, but underlying numbers stay correct and identical for everyone.\n- Keep it professional and never patronising.",
+      "Labels": "agent,backend",
+      "Parent": "EQ-E3"
+    },
+    {
+      "Issue id": "EQ-019",
+      "Summary": "Agent Runner",
+      "Issue Type": "Task",
+      "Description": "Implement OpenRouter loop to manage conversation state.\n\nEDGE CASES:\n- Max 5 tool calls to prevent infinite loops.\n- Handle partial tool failures gracefully without crashing.",
+      "Labels": "agent,backend",
+      "Parent": "EQ-E3"
+    },
+    {
+      "Issue id": "EQ-020",
+      "Summary": "Security Gate",
+      "Issue Type": "Task",
+      "Description": "Implement PromptInjectionDetector.\n\nEDGE CASES:\n- Block non-financial queries.\n- Enforce strict cross-tenant data isolation (investor can NEVER query another investor's data, strictly enforced at the data layer API level).",
+      "Labels": "agent,security",
+      "Parent": "EQ-E3"
+    },
+    {
+      "Issue id": "EQ-021",
+      "Summary": "Routers",
+      "Issue Type": "Task",
+      "Description": "Implement /api/v1/chat (SSE streaming) and /api/v1/investors (for UI dropdown to simulate logged-in user).",
+      "Labels": "agent,backend",
+      "Parent": "EQ-E3"
+    }
+  ]
+}

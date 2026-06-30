@@ -1,0 +1,84 @@
+{
+  "EQ-E1": [
+    {
+      "Issue id": "EQ-001",
+      "Summary": "Monorepo Init",
+      "Issue Type": "Task",
+      "Description": "Create root scaffold: pyproject.toml (fastapi, pydantic, pandas), .env.example, .gitignore.\n\nEDGE CASES:\n- data/ must be gitignored to avoid pushing raw CSVs.",
+      "Labels": "scaffold,infrastructure",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-002",
+      "Summary": "FastAPI Backend Scaffold",
+      "Issue Type": "Task",
+      "Description": "Create main.py, settings.py, logging_config.py.\n\nEDGE CASES:\n- ensure pydantic-settings loads secrets.",
+      "Labels": "scaffold,backend",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-003",
+      "Summary": "Vercel Python Serverless",
+      "Issue Type": "Task",
+      "Description": "Create api/chat.py with Mangum wrapper.\n\nEDGE CASES:\n- vercel.json maxDuration 60.",
+      "Labels": "scaffold,infrastructure",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-004",
+      "Summary": "Docker Multi-stage",
+      "Issue Type": "Task",
+      "Description": "Create Dockerfile with frontend-builder and runtime stages.",
+      "Labels": "scaffold,docker",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-005",
+      "Summary": "Nginx Config",
+      "Issue Type": "Task",
+      "Description": "Create nginx.conf for reverse proxy.\n\nEDGE CASES:\n- proxy_buffering off for SSE.",
+      "Labels": "scaffold,infrastructure",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-006",
+      "Summary": "Supervisord Config",
+      "Issue Type": "Task",
+      "Description": "Create supervisord.conf for nginx, fastapi, nextjs.",
+      "Labels": "scaffold,infrastructure",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-007",
+      "Summary": "Docker Compose",
+      "Issue Type": "Task",
+      "Description": "Create docker-compose.yml with data volume mount.",
+      "Labels": "scaffold,docker",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-008",
+      "Summary": "Platform Scripts",
+      "Issue Type": "Task",
+      "Description": "Create scripts/ for mac/linux/windows start/stop.",
+      "Labels": "scaffold,infrastructure",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-009",
+      "Summary": "CI Pipeline",
+      "Issue Type": "Task",
+      "Description": "Create .github/workflows/ci.yml for testing and vercel deploy.",
+      "Labels": "scaffold,ci",
+      "Parent": "EQ-E1"
+    },
+    {
+      "Issue id": "EQ-010",
+      "Summary": "Documentation",
+      "Issue Type": "Task",
+      "Description": "Create AGENT.md files, BEGINNER-GUIDE.md.",
+      "Labels": "scaffold,docs",
+      "Parent": "EQ-E1"
+    }
+  ]
+}
