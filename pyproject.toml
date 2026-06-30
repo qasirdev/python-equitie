@@ -17,7 +17,8 @@ dependencies = [
     "httpx>=0.27.0",
     "ruff>=0.4.8",
     "mypy>=1.10.0",
-    "pre-commit>=3.7.1"
+    "pre-commit>=3.7.1",
+    "pandas-stubs>=2.2.2.240603"
 ]
 
 [build-system]
