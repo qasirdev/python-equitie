@@ -26,8 +26,17 @@ This implementation followed the strict 5-Agent Handoff protocol outlined in `AG
   - **Isolation**: Handled module-level monkeypatching of the global `data_store` singleton within the `pytest` lifecycle.
 - **Result**: `pytest backend/tests/test_data_layer.py` passes 100%.
 
-### 4. Docs Agent
-- **Deliverable**: Generated this `ai-workflow.md` documentation file mapping out the internal reasoning loop to fulfill the requirements of the case study proposal.
+### 4. Agent Architecture (EQ-E3)
+- **Tools**: Deterministic tools configured via Pydantic/OpenAI schema to eliminate LLM math hallucinations.
+- **Security**: Added `PromptInjectionDetector` in `gate.py` to block non-financial queries and ensure cross-tenant data isolation.
+- **Runner Loop**: Streaming loop enforcing max 5 iterations via OpenRouter/FastAPI.
+
+### 5. Frontend & UI (EQ-E4)
+- **Framework**: Next.js App Router with Tailwind CSS.
+- **Key Features**: SSE-based streaming chat, Observability Badge (tokens, latency, citations), and Investor Selector simulating logged-in state.
+
+### 6. Docs Agent
+- **Deliverables**: Generated this `ai-workflow.md`, `proposal-production-saas.md`, and `docs/walkthrough-script.md` to fulfill the case study requirements.
 
 ---
 

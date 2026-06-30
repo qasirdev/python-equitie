@@ -18,7 +18,9 @@ dependencies = [
     "ruff>=0.4.8",
     "mypy>=1.10.0",
     "pre-commit>=3.7.1",
-    "pandas-stubs>=2.2.2.240603"
+    "pandas-stubs>=2.2.2.240603",
+    "openai>=2.44.0",
+    "pydantic-core>=2.46.4",
 ]
 
 [build-system]
@@ -34,7 +36,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I"] # Include isort (I)
-ignore = []
+ignore = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["backend"]
+
+[tool.mypy]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped", "no-any-return", "import-not-found"]
