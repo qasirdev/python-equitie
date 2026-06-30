@@ -47,4 +47,4 @@ class DataLoader:
 
 
 # Assuming the server is run from the `python-equitie` directory
-data_store = DataLoader("EquiTie - Senior Software Engineer - Case Study/data")
+data_store = DataLoader("data")

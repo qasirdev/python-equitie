@@ -2,6 +2,7 @@ import json
 import os
 from typing import Any, AsyncGenerator, Dict, List
 
+import numpy as np
 import structlog
 from openai import AsyncOpenAI
 from pydantic import BaseModel
@@ -10,15 +11,33 @@ from ..data_layer.personalisation import build_personalisation_profile
 from .prompt import get_system_prompt
 from .tools import AGENT_TOOLS, TOOLS_REGISTRY
 
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj: Any) -> Any:
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+
 logger = structlog.get_logger("equitie_backend.agent")
 
 # We will use OpenRouter or direct OpenAI. For standard interface we use OpenAI client.
 # The base URL can be overridden via OPENAI_BASE_URL env var to point to OpenRouter.
 client = AsyncOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY", "dummy"),
-    base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+    api_key=os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY", "dummy"),
+    base_url=os.getenv("OPENAI_BASE_URL")
+    or os.getenv("OPENROUTER_BASE_URL", "https://api.openai.com/v1"),
 )
-MODEL_NAME = os.getenv("LLM_MODEL", "gpt-4o-mini")
+MODEL_NAME: str = (
+    os.getenv("LLM_OPENROUTER_MODELS")
+    or os.getenv("LLM_PRIMARY_MODEL")
+    or os.getenv("LLM_MODEL")
+    or "gpt-4o-mini"
+)
 
 
 class Message(BaseModel):
@@ -171,7 +190,7 @@ async def run_agent_loop(
                     "role": "tool",
                     "tool_call_id": tool_call_id,
                     "name": func_name,
-                    "content": json.dumps(result),
+                    "content": json.dumps(result, cls=NumpyEncoder),
                 }
                 current_messages.append(tool_msg)
 

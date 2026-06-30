@@ -2,10 +2,10 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 # Assuming package.json is there later
-# COPY frontend/package*.json ./
-# RUN npm install
-# COPY frontend/ ./
-# RUN npm run build
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
 
 # ---- Base Python ----
 FROM python:3.12-slim AS runtime
@@ -34,8 +34,8 @@ COPY README.md ./
 # Sync the project itself (non-editable for production)
 RUN uv sync --frozen --no-dev --no-editable
 
-# Copy frontend static build (uncomment when Next.js is added)
-# COPY --from=frontend-builder /app/frontend/out /usr/share/nginx/html
+# Copy frontend static build
+COPY --from=frontend-builder /app/frontend/out /usr/share/nginx/html
 
 # Copy configs
 COPY nginx.conf /etc/nginx/nginx.conf

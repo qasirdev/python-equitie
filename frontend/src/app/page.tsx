@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles } from "lucide-react";
+import { Send, Loader2, Activity, User, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2, Mic, MicOff } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant" | "system" | "tool";
@@ -10,6 +10,55 @@ type Message = {
   tool_calls?: unknown[];
   name?: string;
 };
+
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
+interface SpeechRecognitionEventMap {
+  result: SpeechRecognitionEvent;
+  start: Event;
+  end: Event;
+  error: SpeechRecognitionErrorEvent;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+declare class SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
 
 export default function Home() {
   const [investors, setInvestors] = useState<{ investor_id: string; investor_name: string }[]>([]);
@@ -23,19 +72,84 @@ export default function Home() {
   const [usage, setUsage] = useState({ prompt: 0, completion: 0 });
   const [toolCalls, setToolCalls] = useState<{function: string, arguments: string}[]>([]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Voice input state
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeechSupported, setIsSpeechSupported] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    // Initialize Web Speech API
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        recognition.onresult = (event: any) => {
+          let transcript = "";
+          for (let i = 0; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          setInput(transcript);
+        };
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = () => setIsListening(false);
+
+        recognitionRef.current = recognition;
+        // eslint-disable-next-line
+        setIsSpeechSupported(true);
+      }
+    }
+  }, []);
+
+  const toggleListen = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      setInput("");
+      recognitionRef.current?.start();
+    }
+  };
 
   useEffect(() => {
     // Fetch investors for dropdown
-    fetch("http://127.0.0.1:8000/api/v1/investors")
+    fetch("/api/v1/investors")
       .then((res) => res.json())
       .then((data) => setInvestors(data))
       .catch((err) => console.error("Failed to load investors", err));
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, [messages]);
+
+  const clearChat = () => {
+    setMessages([]);
+    setUsage({ prompt: 0, completion: 0 });
+    setToolCalls([]);
+    setLatency(0);
+  };
+
+  // Reset chat whenever the selected investor changes
+  useEffect(() => {
+    // eslint-disable-next-line
+    setMessages([]);
+    setUsage({ prompt: 0, completion: 0 });
+    setToolCalls([]);
+    setLatency(0);
+  }, [selectedInvestor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +168,7 @@ export default function Home() {
     const startTime = Date.now();
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/v1/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,7 +214,7 @@ export default function Home() {
             } else if (data.type === "error") {
               setMessages((prev) => [...prev, { role: "assistant", content: `**Error:** ${data.message}` }]);
             }
-          } catch (_err) {
+          } catch (_err) { // eslint-disable-line
             // not valid JSON, ignore
           }
         }
@@ -236,8 +350,18 @@ export default function Home() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative z-10 bg-slate-900/30 backdrop-blur-md">
+        {messages.length > 0 && (
+          <button
+            onClick={clearChat}
+            className="absolute top-6 right-8 p-2 px-3 bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 rounded-xl transition-all shadow-sm z-50 flex items-center gap-2 text-xs font-semibold animate-fade-in"
+            title="Reset Chat"
+          >
+            <Trash2 className="h-4 w-4" /> Reset Chat
+          </button>
+        )}
+
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 custom-scrollbar">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 pt-24 md:p-10 md:pt-24 space-y-8 custom-scrollbar">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6 max-w-lg mx-auto text-center">
               <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-5 rounded-3xl border border-cyan-500/20 shadow-lg shadow-cyan-500/10 mb-4 animate-float">
@@ -305,28 +429,43 @@ export default function Home() {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} className="h-px" />
         </div>
 
         {/* Input Area */}
-        <div className="p-6 md:p-8 bg-slate-900/80 backdrop-blur-xl border-t border-white/10 relative z-20">
+        <div className="p-4 md:p-6 bg-slate-900/80 backdrop-blur-xl border-t border-white/10 relative z-20">
           <form onSubmit={handleSubmit} className="flex gap-4 max-w-4xl mx-auto relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={selectedInvestor ? "Ask a question about the portfolio..." : "Select an investor first..."}
-              className="flex-1 px-6 py-4 rounded-2xl border border-white/10 bg-slate-800/90 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 shadow-inner text-base transition-all relative z-10"
+              placeholder={selectedInvestor ? (isListening ? "Listening..." : "Ask a question about the portfolio...") : "Select an investor first..."}
+              className={`flex-1 px-6 py-4 pr-24 rounded-2xl border ${isListening ? "border-cyan-500/50 bg-cyan-900/20 text-cyan-50" : "border-white/10 bg-slate-800/90 text-white"} placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 shadow-inner text-base transition-all relative z-10`}
               disabled={isLoading || !selectedInvestor}
             />
-            <button
-              type="submit"
-              disabled={isLoading || !selectedInvestor || !input.trim()}
-              className="absolute right-2 top-2 bottom-2 aspect-square bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-xl flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:grayscale transition-all shadow-lg z-20"
-            >
-              <Send className="h-5 w-5" />
-            </button>
+
+            <div className="absolute right-2 top-2 bottom-2 flex gap-2 z-20">
+              <button
+                type="button"
+                onClick={toggleListen}
+                disabled={isLoading || !selectedInvestor || !isSpeechSupported}
+                className={`aspect-square rounded-xl flex items-center justify-center transition-all shadow-md ${
+                  isListening
+                    ? "bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse hover:bg-red-500/30"
+                    : "bg-slate-700/50 text-slate-300 border border-white/5 hover:bg-slate-700 hover:text-white disabled:opacity-50 disabled:grayscale"
+                }`}
+                title={isListening ? "Stop listening" : "Start voice input"}
+              >
+                {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || !selectedInvestor || !input.trim()}
+                className="aspect-square bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-xl flex items-center justify-center hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 disabled:grayscale transition-all shadow-lg"
+              >
+                <Send className="h-5 w-5" />
+              </button>
+            </div>
           </form>
           <div className="max-w-4xl mx-auto text-center mt-3">
             <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">
