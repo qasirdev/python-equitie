@@ -10,7 +10,7 @@ This document contains the ready-to-use prompt to start autonomous implementatio
 
 Before running the kick-off prompt, verify:
 
-- [ ] All documentation files are present in `equitie-app/`
+- [ ] All documentation files are present in `equitie-app/` and also make sure that new files should be added to the `equitie-app/` folder only.
 - [ ] `docs/jira-tickets-json/` contains 4 epic JSON files (EQ-E1 through EQ-E4)
 - [ ] `docs/tasks/todo.md` exists and is ready for updates
 - [ ] `docs/tasks/lessons.md` exists with initial structure
