@@ -7,7 +7,7 @@ import { Send, Loader2, Activity, User, Info, FileText } from "lucide-react";
 type Message = {
   role: "user" | "assistant" | "system" | "tool";
   content?: string;
-  tool_calls?: any[];
+  tool_calls?: unknown[];
   name?: string;
 };
 
@@ -90,7 +90,7 @@ export default function Home() {
             } else if (data.type === "error") {
               setMessages((prev) => [...prev, { role: "assistant", content: `**Error:** ${data.message}` }]);
             }
-          } catch (err) {
+          } catch (_err) {
             // not valid JSON, ignore
           }
         }

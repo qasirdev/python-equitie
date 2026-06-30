@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         "Connection": "keep-alive",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Proxy error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
