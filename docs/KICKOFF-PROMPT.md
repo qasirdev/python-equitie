@@ -10,7 +10,7 @@ This document contains the ready-to-use prompt to start autonomous implementatio
 
 Before running the kick-off prompt, verify:
 
-- [ ] All documentation files are present in `equitie-app/` and also make sure that new files should be added to the `equitie-app/` folder only.
+- [ ] All documentation files are present in the repository root and also make sure that new files should be added directly to the correct directories without an intermediate `equitie-app/` folder.
 - [ ] `docs/jira-tickets-json/` contains 4 epic JSON files (EQ-E1 through EQ-E4)
 - [ ] `docs/tasks/todo.md` exists and is ready for updates
 - [ ] `docs/tasks/lessons.md` exists with initial structure
@@ -44,7 +44,7 @@ Implement Epic EQ-E1 (Project Scaffold & Infrastructure) following the YOLO mode
 0. Run environment checks: Verify uv, npm, docker. Fail fast if missing.
 1. Read all tasks from `docs/jira-tickets-json/EQ-E1-scaffold.json`
 2. Update `docs/tasks/todo.md` with your implementation plan
-3. Implement each task following IMPLEMENTATION DETAILS and EDGE CASES. 
+3. Implement each task following IMPLEMENTATION DETAILS and EDGE CASES.
 4. After coding: run Refactor Agent checks
 5. After refactor: trigger the PR Code Review Agent (`.agent/rules/review.mdc`). This file acts as your PR Code Review Agent. Whenever the coding or refactor agents finish a task, this Review agent will now automatically trigger to audit the diff for complexity, security, and architectural violations before the task is marked as "Done".
 6. After review: run Testing Agent checks and VERIFY the test suite passes

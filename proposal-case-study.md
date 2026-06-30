@@ -12,7 +12,7 @@ The prototype will be deliberately **narrow and deep**, focusing exclusively on 
 *   **Portfolio Overview**: Holdings, current value, total committed vs. contributed, and MOIC.
 *   **Position Deep-Dives**: Current value, cost basis, entry share price (handling multi-round SPVs).
 *   **Obligations & Outcomes**: Upcoming capital calls, overdue management fees, exits, and net distributions.
-*   **Personalisation**: 
+*   **Personalisation**:
     *   **Tone & Depth**: Plain language with jargon explanations (e.g., MOIC, Carry) for older/less tech-savvy investors. Data-dense and concise answers for highly sophisticated investors.
     *   **Contextual Framing**: Answers will dynamically highlight the investor's most active sectors or deal count to make the interaction feel truly bespoke.
 
@@ -23,13 +23,13 @@ To ensure a clean separation of concerns and rapid shipping within the timebox, 
 *   **Frontend**: Next.js 16 (App Router) + Tailwind CSS. A simple but polished chat interface with server-sent events (SSE) for streaming responses.
 *   **Backend**: FastAPI (Python 3.12). Exposes the chat streaming endpoint and handles the agent orchestration loop.
 *   **Data Layer**: In-memory `pandas` DataFrames. The 10 provided CSV files will be loaded into memory at application startup. This avoids the overhead of setting up a PostgreSQL/vector database, perfectly fitting the 3-hour timebox.
-*   **LLM Integration**: `openai/gpt-oss-120b` (or equivalent strong reasoning model) routed via OpenRouter for function-calling. 
+*   **LLM Integration**: `openai/gpt-oss-120b` (or equivalent strong reasoning model) routed via OpenRouter for function-calling.
 
 ## 3. Reliability & Verification (Reliability & Verification - 20%)
 
 **The most critical constraint: The LLM will NEVER perform financial math.**
 
-1.  **Deterministic Tooling**: The backend will expose 9 strict Python tools (e.g., `compute_moic`, `get_capital_calls`, `resolve_investor`) to the LLM via OpenAI function calling schemas. 
+1.  **Deterministic Tooling**: The backend will expose 9 strict Python tools (e.g., `compute_moic`, `get_capital_calls`, `resolve_investor`) to the LLM via OpenAI function calling schemas.
 2.  **Pandas Execution**: All calculations (FX conversion, fee discounts, net distribution math) will be executed by deterministic Python/Pandas code querying the CSV data.
 3.  **LLM as a Narrator**: The LLM will only receive the JSON output from these tools and will be instructed to *narrate* the results, strictly citing the source rows without hallucinating calculations.
 4.  **Edge Case Handling**: Explicit Python logic will handle the 13 deliberate traps in the dataset (e.g., multi-round companies, share-price discounts, down-rounds, write-offs).

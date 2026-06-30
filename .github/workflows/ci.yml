@@ -9,9 +9,6 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: equitie-app
     steps:
       - uses: actions/checkout@v4
 
@@ -47,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: equitie-app/frontend
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -89,9 +86,6 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: equitie-app
     needs:
       - backend
       - frontend
@@ -103,9 +97,6 @@ jobs:
 
   workflow-docs:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: equitie-app
     steps:
       - uses: actions/checkout@v4
 

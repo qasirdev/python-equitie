@@ -151,18 +151,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables.
-    
+
     All settings are validated on startup. Invalid configuration will
     raise ValidationError and prevent application from starting.
     """
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
         frozen=True,  # Immutable after creation
     )
-    
+
     # Application
     app_env: Literal["development", "staging", "production"] = Field(
         default="development",
@@ -177,7 +177,7 @@ class Settings(BaseSettings):
         min_length=32,
         description="Secret key for session encryption",
     )
-    
+
     # Database
     database_url: PostgresDsn = Field(
         ...,
@@ -189,7 +189,7 @@ class Settings(BaseSettings):
         le=100,
         description="Maximum database connection pool size",
     )
-    
+
     # LLM
     openrouter_api_key: str = Field(
         ...,
@@ -200,7 +200,7 @@ class Settings(BaseSettings):
         default="openai/gpt-4o-mini",
         description="Primary LLM model identifier",
     )
-    
+
     # Security
     jwt_secret_key: str = Field(
         ...,
@@ -289,11 +289,11 @@ def first[T](items: list[T]) -> T | None:
 
 class Box[T]:
     """Generic container for any type."""
-    
+
     def __init__(self, value: T) -> None:
         """Initialize box with a value."""
         self.value = value
-    
+
     def get(self) -> T:
         """Get the contained value."""
         return self.value
@@ -326,17 +326,17 @@ def authenticate_user(
     password: str,
 ) -> dict[str, str] | None:
     """Authenticate user with credentials and return session token.
-    
+
     Validates username and password against database records using
     Argon2id hashing. Returns session details if successful.
-    
+
     Args:
         username: User's login username (case-insensitive)
         password: Plain-text password (will be hashed for comparison)
-    
+
     Returns:
         Dictionary with 'token' and 'expires_at' keys, or None if auth fails
-        
+
     Example:
         >>> session = authenticate_user("alice", "secret123")
         >>> print(session["token"])
@@ -348,24 +348,24 @@ def authenticate_user(
 
 class UserSession:
     """User session with JWT token and expiration tracking.
-    
+
     Manages the lifecycle of an authenticated user session including
     token refresh, expiration checks, and cleanup.
     """
-    
+
     def __init__(self, token: str, user_id: int) -> None:
         """Initialize session with token and user ID.
-        
+
         Args:
             token: JWT token string
             user_id: Database user ID
         """
         self.token = token
         self.user_id = user_id
-    
+
     def is_expired(self) -> bool:
         """Check if session token has expired.
-        
+
         Returns:
             True if token is past expiration, False otherwise
         """
@@ -436,17 +436,17 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr
 # ✅ CORRECT — Pydantic v2 patterns
 class User(BaseModel):
     """User account model with validated email and password.
-    
+
     All fields are required unless explicitly marked with default values.
     Passwords are stored as SecretStr to prevent accidental logging.
     """
-    
+
     model_config = ConfigDict(
         strict=True,
         frozen=True,  # Immutable after creation
         from_attributes=True,  # Allow ORM object mapping
     )
-    
+
     user_id: int = Field(
         ...,
         description="Database primary key",
@@ -493,7 +493,7 @@ user_json = user.model_dump_json()  # NOT .json()
 class UserOld(BaseModel):
     user_id: int
     username: str
-    
+
     class Config:  # Use model_config = ConfigDict(...) instead
         frozen = True
         orm_mode = True  # Use from_attributes=True instead
@@ -526,12 +526,12 @@ from backend.security.nhi_registry import NHIRecord, NHIRegistry
 
 def test_nhi_registry_registration() -> None:
     """Test NHI registration persists and retrieves correctly.
-    
+
     Creates a temporary registry, registers an agent, and verifies
     retrieval returns the correct record with all fields intact.
     """
     registry = NHIRegistry(registry_path="test_registry.json")
-    
+
     record = NHIRecord(
         nhi_id="nhi_test_v1",
         agent_name="test",
@@ -542,10 +542,10 @@ def test_nhi_registry_registration() -> None:
         access_model="static",
         registered_by="pytest",
     )
-    
+
     registry.register(record)
     retrieved = registry.get("nhi_test_v1")
-    
+
     assert retrieved is not None
     assert retrieved.agent_name == "test"
 
@@ -553,7 +553,7 @@ def test_nhi_registry_registration() -> None:
 @pytest.mark.asyncio
 async def test_async_function() -> None:
     """Test async function with proper await handling.
-    
+
     Validates that async operations complete successfully and
     return expected results.
     """
@@ -583,10 +583,10 @@ import httpx
 
 async def fetch_user_data(user_id: int) -> dict[str, str]:
     """Fetch user data from external API.
-    
+
     Args:
         user_id: User ID to fetch
-        
+
     Returns:
         Dictionary with user data
     """
@@ -598,10 +598,10 @@ async def fetch_user_data(user_id: int) -> dict[str, str]:
 
 async def fetch_multiple_users(user_ids: list[int]) -> list[dict[str, str]]:
     """Fetch multiple users concurrently.
-    
+
     Args:
         user_ids: List of user IDs to fetch
-        
+
     Returns:
         List of user data dictionaries
     """
@@ -610,7 +610,7 @@ async def fetch_multiple_users(user_ids: list[int]) -> list[dict[str, str]]:
         *[fetch_user_data(user_id) for user_id in user_ids],
         return_exceptions=True,  # Don't fail entire batch on one error
     )
-    
+
     # Filter out exceptions
     return [result for result in results if isinstance(result, dict)]
 ```
@@ -674,16 +674,16 @@ from tenacity import (
 )
 async def call_llm_api(messages: list[dict[str, str]]) -> dict[str, str]:
     """Call LLM API with automatic retry on transient failures.
-    
+
     Retries up to 3 times with exponential backoff (2s, 4s, 8s, ..., max 30s)
     on HTTP 5xx errors and timeouts. Client errors (4xx) fail immediately.
-    
+
     Args:
         messages: List of chat messages with 'role' and 'content' keys
-        
+
     Returns:
         Dictionary with LLM response containing 'content' key
-        
+
     Raises:
         HTTPStatusError: On 4xx client errors (not retried)
         TimeoutException: After all retries exhausted
@@ -718,14 +718,14 @@ MAX_REVISIONS = 2
 
 def should_circuit_break(state: BriefingGraphState) -> bool:
     """Circuit break on budget exceeded or max revisions.
-    
+
     Checks if agent execution should be terminated due to:
     - Token budget exceeded (prevents denial-of-wallet)
     - Max revisions exceeded (prevents infinite loops)
-    
+
     Args:
         state: Current graph state with token and revision counts
-        
+
     Returns:
         True if circuit breaker should trigger, False otherwise
     """
@@ -764,16 +764,16 @@ limiter = Limiter(key_func=get_remote_address)
 @limiter.limit("10/minute")
 async def generate_briefing(request: Request) -> dict[str, str]:
     """Generate daily briefing with rate limiting.
-    
+
     Limited to 10 requests per minute per IP address. Exceeding this
     limit returns 429 status with Retry-After header.
-    
+
     Args:
         request: FastAPI request object (used for rate limit key)
-        
+
     Returns:
         Dictionary with briefing content and metadata
-        
+
     Raises:
         HTTPException: 429 if rate limit exceeded
     """
@@ -803,10 +803,10 @@ shutdown_event = asyncio.Event()
 
 def handle_sigterm(signum: int, frame: object) -> None:
     """Handle SIGTERM for graceful shutdown.
-    
+
     Triggered by Docker/Kubernetes stop commands. Sets shutdown event
     to initiate cleanup sequence.
-    
+
     Args:
         signum: Signal number (SIGTERM=15)
         frame: Current stack frame
@@ -820,19 +820,19 @@ signal.signal(signal.SIGTERM, handle_sigterm)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage FastAPI application lifecycle.
-    
+
     Handles startup (initialize pools) and shutdown (cleanup) phases.
     Ensures resources are properly released on termination.
-    
+
     Args:
         app: FastAPI application instance
     """
     # Startup
     await initialize_db_pool()
     await initialize_mcp_clients()
-    
+
     yield
-    
+
     # Shutdown
     await close_db_pool()
     await close_mcp_clients()
@@ -904,10 +904,10 @@ pool: asyncpg.Pool | None = None
 
 async def initialize_db_pool() -> None:
     """Initialize database connection pool on startup.
-    
+
     Creates a connection pool with configurable size (default 10).
     Pool is stored in global variable for application-wide access.
-    
+
     Raises:
         ConnectionError: If database connection fails
     """
@@ -922,7 +922,7 @@ async def initialize_db_pool() -> None:
 
 async def close_db_pool() -> None:
     """Close database connection pool on shutdown.
-    
+
     Ensures all connections are properly released and closed.
     Called automatically during FastAPI shutdown.
     """
@@ -935,20 +935,20 @@ async def close_db_pool() -> None:
 @asynccontextmanager
 async def get_db_connection():
     """Acquire database connection from pool.
-    
+
     Context manager that automatically returns connection to pool
     after use. Handles connection errors and retries automatically.
-    
+
     Yields:
         asyncpg.Connection: Database connection from pool
-        
+
     Example:
         >>> async with get_db_connection() as conn:
         ...     result = await conn.fetch("SELECT * FROM users")
     """
     if pool is None:
         raise RuntimeError("Database pool not initialized")
-    
+
     async with pool.acquire() as conn:
         yield conn
 ```

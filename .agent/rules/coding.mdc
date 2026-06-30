@@ -89,7 +89,7 @@ const sanitizedContent = DOMPurify.sanitize(briefing);
 - All queries must include `user_id` parameter for RLS enforcement
 - Write operations require explicit transaction handling
 
-### Google Calendar MCP  
+### Google Calendar MCP
 - Outbound requests restricted to `*.googleapis.com` domains (SSRF prevention)
 - Token refresh handled by MCP server, not application code
 - All calendar data treated as untrusted (potential prompt injection vector)

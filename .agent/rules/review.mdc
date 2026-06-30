@@ -34,6 +34,6 @@ Your goal is to review code modifications to ensure they meet production-grade s
 - Output your findings as a structured checklist with severity levels (High/Medium/Low).
 
 ## Integration in Workflow
-- You act as the **Critic Agent**. 
+- You act as the **Critic Agent**.
 - You must review the output of the Coding/Refactor agents before marking a task as "Done".
 - You DO NOT approve code that fails automated testing (`pytest` or `vitest`).

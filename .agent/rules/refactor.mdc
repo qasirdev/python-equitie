@@ -28,20 +28,20 @@ from datetime import datetime
 
 class AgentResultEnvelope(BaseModel):
     """Canonical envelope for all inter-agent communication."""
-    
+
     model_config = ConfigDict(
         strict=True,
         frozen=True,  # Immutable after creation
         extra="forbid",  # Reject unexpected fields
     )
-    
+
     agent_id: str = Field(..., min_length=1, max_length=50, pattern=r"^[a-z_]+$")
     canonical_role: Literal["doer", "planner", "critic", "tool_operator", "supervisor"]
     status: Literal["success", "failure", "escalated"]
     result: dict | None = None
     metadata: "ExecutionMetadata"
     escalation: "EscalationPayload | None" = None
-    
+
     @model_validator(mode="after")
     def validate_escalation_required(self) -> "AgentResultEnvelope":
         if self.status == "escalated" and self.escalation is None:
@@ -51,9 +51,9 @@ class AgentResultEnvelope(BaseModel):
 
 class ExecutionMetadata(BaseModel):
     """Execution telemetry attached to every agent response."""
-    
+
     model_config = ConfigDict(strict=True, frozen=True)
-    
+
     execution_ms: int = Field(..., ge=0, le=300_000)  # Max 5 minutes
     tokens_used: int = Field(..., ge=0, le=128_000)
     model_used: str = Field(..., min_length=1)
@@ -157,7 +157,7 @@ function BriefingContent({ html }: { html: string }) {
     ALLOWED_TAGS: ['p', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'strong', 'em', 'code', 'pre'],
     ALLOWED_ATTR: [],
   });
-  
+
   return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
 }
 ```

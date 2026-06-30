@@ -66,7 +66,7 @@ To execute this, an autonomous cross-functional pod is required:
     *   *Mitigation*: Route simple queries to fast models (DeepSeek-v4-Flash) and complex routing to larger models. Heavy reliance on caching (Redis/Semantic Cache).
 *   **Risk**: Hallucinated Financials.
     *   *Mitigation*: Strict architectural enforcement—LLMs never calculate.
-*   **Build vs. Buy**: 
+*   **Build vs. Buy**:
     *   *Buy*: LLM APIs (do not host custom foundation models), E-signature, KYC engines.
     *   *Build*: The agent orchestration layer (Temporal), specific VC data mapping, and the proprietary RAG retrieval strategies.
     *   *Cost Shape*: High upfront engineering OPEX. Variable LLM inference costs scale linearly with MAUs, offset by massive savings in human RM operational hours.

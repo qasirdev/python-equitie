@@ -109,14 +109,14 @@ import { BriefingDashboard } from '@/components/BriefingDashboard';
 describe('BriefingDashboard', () => {
   it('renders briefing content with proper accessibility', () => {
     render(<BriefingDashboard briefing="Test content" status="success" />);
-    
+
     expect(screen.getByRole('article')).toBeInTheDocument();
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
 
   it('shows degraded state with retry option', () => {
     render(<BriefingDashboard briefing="" status="degraded" />);
-    
+
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
@@ -182,7 +182,7 @@ async def test_calendar_injection_blocked(client: AsyncClient, mock_calendar_wit
     """Calendar events with injection attempts must be quarantined."""
     response = await client.post("/api/v1/briefing/generate")
     data = response.json()
-    
+
     # Verify the malicious event was excluded
     assert "Ignore previous" not in data.get("briefing", "")
     # Verify security escalation occurred
@@ -214,7 +214,7 @@ async def test_local_llm_fallback(client: AsyncClient, mock_openrouter_offline):
     """System falls back to local LLM when OpenRouter is unavailable."""
     response = await client.post("/api/v1/briefing/generate")
     data = response.json()
-    
+
     assert data["status"] == "success"
     assert "local" in data["metadata"]["model_used"].lower()
 ```

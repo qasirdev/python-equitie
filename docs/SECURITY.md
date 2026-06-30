@@ -80,7 +80,7 @@ Every security event is logged with a `trace_id` linking it to the originating H
 | **LLM09** | Overreliance | ⬜ **N/A** | UX guidance — out of scope for backend security layer | N/A |
 | **LLM10** | Model Theft | ⬜ **N/A** | No proprietary models are hosted or trained | N/A |
 
-**E2E validation:** [`backend/tests/e2e/test_security_scenarios.py`](../backend/tests/e2e/test_security_scenarios.py)  
+**E2E validation:** [`backend/tests/e2e/test_security_scenarios.py`](../backend/tests/e2e/test_security_scenarios.py)
 **Prompt guardrails:** [`prompts/security/`](../prompts/security/) — versioned contracts, guardrails, and tool policies
 
 ---
@@ -119,8 +119,8 @@ Multi-layer jailbreak defense beyond regex pattern matching.
 
 **PromptGuard 2 setup:** requires `meta-llama/Llama-Prompt-Guard-2-86M` from Hugging Face. Set `HF_TOKEN` and optionally preload the model to `~/.cache/huggingface`. Disable via `LLAMAFIREWALL_ENABLED=false` (regex + constitutional layers remain active). Tune threshold with `LLAMAFIREWALL_BLOCK_THRESHOLD` (default `0.9`).
 
-Rules: `backend/security/rules.yaml`  
-Evaluation corpus: `backend/tests/security/jailbreak_corpus.yaml` (≥95% block rate in CI)  
+Rules: `backend/security/rules.yaml`
+Evaluation corpus: `backend/tests/security/jailbreak_corpus.yaml` (≥95% block rate in CI)
 PromptGuard tests: [`test_prompt_guard.py`](../backend/tests/security/test_prompt_guard.py)
 
 Metric: `constitutional_violations_total{rule_id, severity}`

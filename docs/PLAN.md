@@ -38,8 +38,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 1: Project Scaffold ✅
 
-**Epic:** DB-E1  
-**Branch:** `epic/E1-project-scaffold`  
+**Epic:** DB-E1
+**Branch:** `epic/E1-project-scaffold`
 **Tasks:** 10
 
 | Task ID | Summary | Status | Agent |
@@ -59,8 +59,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 2: Core Agents ✅
 
-**Epic:** DB-E2  
-**Branch:** `epic/E2-core-agents`  
+**Epic:** DB-E2
+**Branch:** `epic/E2-core-agents`
 **Tasks:** 10
 
 | Task ID | Summary | Status | Agent |
@@ -80,8 +80,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 3: Observability 🔄
 
-**Epic:** DB-E3  
-**Branch:** `epic/E3-observability`  
+**Epic:** DB-E3
+**Branch:** `epic/E3-observability`
 **Tasks:** 8
 
 | Task ID | Summary | Status | Agent |
@@ -99,8 +99,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 4: Agentic Consent 🔄
 
-**Epic:** DB-E4  
-**Branch:** `epic/E4-agentic-consent`  
+**Epic:** DB-E4
+**Branch:** `epic/E4-agentic-consent`
 **Tasks:** 8
 
 | Task ID | Summary | Status | Agent |
@@ -118,8 +118,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 5: Security Hardening 🔄
 
-**Epic:** DB-E5  
-**Branch:** `epic/E5-security-hardening`  
+**Epic:** DB-E5
+**Branch:** `epic/E5-security-hardening`
 **Tasks:** 8
 
 | Task ID | Summary | Status | Agent |
@@ -137,8 +137,8 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## MVP 6: Production Deployment ✅
 
-**Epic:** DB-E6  
-**Branch:** `epic/E6-production`  
+**Epic:** DB-E6
+**Branch:** `epic/E6-production`
 **Tasks:** 8
 
 | Task ID | Summary | Status | Agent |
@@ -156,7 +156,7 @@ Fresh autonomous kickoff only (not every "hi"): then read `docs/KICKOFF-PROMPT.m
 
 ## Option 1: Enterprise Hybrid ✅
 
-**Epic:** DB-E7  
+**Epic:** DB-E7
 **Tasks:** DB-053–DB-057 (see `docs/jira-tickets-json/DB-E7-option1-hybrid.json`)
 
 | Area | Implementation |
