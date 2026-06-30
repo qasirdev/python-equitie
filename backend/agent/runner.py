@@ -63,7 +63,7 @@ async def run_agent_loop(
 
             async for chunk in response:  # type: ignore[union-attr]
                 # Yield content tokens directly
-                if getattr(chunk, "usage", None) is not None:
+                if chunk.usage is not None:
                     yield (
                         json.dumps(
                             {
