@@ -6,6 +6,7 @@ from .loader import data_store
 
 from typing import Dict, Any
 
+
 def calculate_investor_metrics(investor_id: str) -> Dict[str, Any]:
     """
     Calculate MOIC, DPI, RVPI, current value, and cost basis.

@@ -3,6 +3,7 @@ from .loader import data_store
 
 from typing import Dict, Any
 
+
 def build_personalisation_profile(investor_id: str) -> Dict[str, Any]:
     """
     Build PersonalisationProfile context from age, tech_savviness,
@@ -27,7 +28,7 @@ def build_personalisation_profile(investor_id: str) -> Dict[str, Any]:
         "tech_savviness": str(inv["tech_savviness"]),
         "deal_count": 0,
         "top_sectors": [],
-        "guidance": ""
+        "guidance": "",
     }
 
     # Calculate derived signals
@@ -54,7 +55,7 @@ def build_personalisation_profile(investor_id: str) -> Dict[str, Any]:
 
     guidance = f"Tone: {tone} Contextualize answers by acknowledging their {profile['deal_count']} investments"
     if profile["top_sectors"]:
-        sectors_str = ', '.join(str(s) for s in profile["top_sectors"])
+        sectors_str = ", ".join(str(s) for s in profile["top_sectors"])
         guidance += f", heavily weighted towards {sectors_str}."
     else:
         guidance += "."
