@@ -55,15 +55,31 @@ async def run_agent_loop(
                 messages=current_messages,
                 tools=tools,
                 stream=True,
+                stream_options={"include_usage": True},
             )
 
             tool_calls: Dict[int, Dict[str, Any]] = {}
             content = ""
 
             async for chunk in response:  # type: ignore[union-attr]
+                # Yield content tokens directly
+                if getattr(chunk, "usage", None):
+                    yield (
+                        json.dumps(
+                            {
+                                "type": "usage",
+                                "prompt_tokens": chunk.usage.prompt_tokens,
+                                "completion_tokens": chunk.usage.completion_tokens,
+                            }
+                        )
+                        + "\n"
+                    )
+
+                if not chunk.choices:
+                    continue
+
                 delta = chunk.choices[0].delta
 
-                # Yield content tokens directly
                 if delta.content:
                     content += delta.content
                     yield json.dumps({"type": "content", "token": delta.content}) + "\n"
@@ -119,6 +135,16 @@ async def run_agent_loop(
                 tool_call_id = tc_dict["id"]
 
                 logger.info("Executing tool", function=func_name, arguments=args_str)
+                yield (
+                    json.dumps(
+                        {
+                            "type": "tool_call",
+                            "function": func_name,
+                            "arguments": args_str,
+                        }
+                    )
+                    + "\n"
+                )
 
                 try:
                     args = json.loads(args_str) if args_str else {}

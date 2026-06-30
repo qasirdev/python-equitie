@@ -17,9 +17,11 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Observability state
   const [latency, setLatency] = useState<number>(0);
-  const [tokens, setTokens] = useState<number>(0);
-  const [citations, setCitations] = useState<string[]>([]);
+  const [usage, setUsage] = useState({ prompt: 0, completion: 0 });
+  const [toolCalls, setToolCalls] = useState<{function: string, arguments: string}[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -44,8 +46,10 @@ export default function Home() {
     setInput("");
     setIsLoading(true);
     setLatency(0);
-    setTokens(0);
-    setCitations([]);
+
+    // Reset observability for new request
+    setUsage({ prompt: 0, completion: 0 });
+    setToolCalls([]);
 
     const startTime = Date.now();
 
@@ -81,12 +85,18 @@ export default function Home() {
             const data = JSON.parse(line);
             if (data.type === "content") {
               assistantContent += data.token;
-              setTokens((t) => t + 1); // rough approximation
               setMessages((prev) => {
                 const newMsgs = [...prev];
                 newMsgs[newMsgs.length - 1].content = assistantContent;
                 return newMsgs;
               });
+            } else if (data.type === "tool_call") {
+              setToolCalls((prev) => [...prev, { function: data.function, arguments: data.arguments }]);
+            } else if (data.type === "usage") {
+              setUsage((prev) => ({
+                prompt: prev.prompt + data.prompt_tokens,
+                completion: prev.completion + data.completion_tokens,
+              }));
             } else if (data.type === "error") {
               setMessages((prev) => [...prev, { role: "assistant", content: `**Error:** ${data.message}` }]);
             }
@@ -98,14 +108,6 @@ export default function Home() {
 
       setLatency(Date.now() - startTime);
 
-      // Simulate citations based on assistant output
-      if (assistantContent.includes("moic") || assistantContent.includes("MOIC")) {
-        setCitations((prev) => [...prev, "metrics.py:calculate_investor_metrics"]);
-      }
-      if (assistantContent.includes("fee") || assistantContent.includes("management")) {
-        setCitations((prev) => [...prev, "fees.py"]);
-      }
-
     } catch (err) {
       console.error(err);
       setMessages((prev) => [...prev, { role: "assistant", content: "**Error connecting to server.**" }]);
@@ -113,6 +115,9 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  // Calculate cost based on gpt-4o-mini pricing ($0.15/1M input, $0.60/1M output)
+  const cost = ((usage.prompt / 1000000) * 0.15) + ((usage.completion / 1000000) * 0.60);
 
   return (
     <div className="flex h-screen bg-slate-50 text-slate-900 font-sans">
@@ -146,28 +151,46 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="p-6 flex-1">
+        <div className="p-6 flex-1 overflow-y-auto">
           <h2 className="text-sm font-semibold mb-4 flex items-center gap-2">
             <Info className="h-4 w-4" /> Observability Badge
           </h2>
           <div className="space-y-4">
-            <div className="bg-slate-50 p-3 rounded-md border border-slate-100">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Latency</div>
-              <div className="font-mono text-lg">{latency} ms</div>
+            <div className="bg-slate-50 p-3 rounded-md border border-slate-100 flex justify-between items-center">
+              <div className="text-xs text-slate-500 uppercase tracking-wider">Latency</div>
+              <div className="font-mono text-sm">{latency} ms</div>
             </div>
+
             <div className="bg-slate-50 p-3 rounded-md border border-slate-100">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Stream Tokens</div>
-              <div className="font-mono text-lg">~{tokens}</div>
+              <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Tokens & Cost</div>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-slate-600">Prompt:</span>
+                <span className="font-mono">{usage.prompt}</span>
+              </div>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-slate-600">Completion:</span>
+                <span className="font-mono">{usage.completion}</span>
+              </div>
+              <div className="flex justify-between text-sm font-semibold border-t border-slate-200 pt-2">
+                <span>Est. Cost:</span>
+                <span className="font-mono">${cost.toFixed(6)}</span>
+              </div>
             </div>
+
             <div className="bg-slate-50 p-3 rounded-md border border-slate-100">
-              <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Citations (Tools)</div>
-              {citations.length === 0 ? (
-                <div className="text-sm text-slate-400">No active tools</div>
+              <div className="text-xs text-slate-500 uppercase tracking-wider mb-2">Tool Calls / Citations</div>
+              {toolCalls.length === 0 ? (
+                <div className="text-sm text-slate-400 italic">No tools called yet</div>
               ) : (
                 <ul className="text-xs space-y-2">
-                  {citations.map((cit, i) => (
-                    <li key={i} className="flex items-center gap-2 text-indigo-700 font-mono bg-indigo-50 px-2 py-1 rounded">
-                      <FileText className="h-3 w-3" /> {cit}
+                  {toolCalls.map((tc, i) => (
+                    <li key={i} className="bg-indigo-50 border border-indigo-100 p-2 rounded flex flex-col gap-1">
+                      <div className="flex items-center gap-1 font-mono text-indigo-700 font-semibold">
+                        <FileText className="h-3 w-3" /> {tc.function}
+                      </div>
+                      <div className="font-mono text-[10px] text-slate-500 truncate" title={tc.arguments}>
+                        {tc.arguments}
+                      </div>
                     </li>
                   ))}
                 </ul>
