@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/app/backend
+      - ./data:/app/data
+      - ./.env:/app/.env
+    environment:
+      - ENVIRONMENT=development
