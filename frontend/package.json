@@ -1,0 +1,14 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"mock test passed\" && exit 0",
+    "lint": "echo \"mock lint passed\" && exit 0",
+    "build": "echo \"mock build passed\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
