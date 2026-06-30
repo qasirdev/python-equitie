@@ -36,7 +36,7 @@ To ensure a clean separation of concerns and rapid shipping within the timebox, 
 
 ## 4. AI-Native Workflow & Speed (AI Workflow - 20%, Speed - 5%)
 
-*   **Development Speed**: The prototype will be built using advanced agentic tools with a highly structured workflow (YOLO mode with sequential Coding → Refactoring → Testing → Documentation agents).
+*   **Development Speed**: The prototype will be built using advanced agentic tools with a highly structured workflow (YOLO mode with sequential Coding → Refactoring → Critic/Review → Testing → Documentation agents).
 *   **Testing**: Automated `pytest` suites will be generated to spot-check known ground-truth values from the CSVs (e.g., ensuring a specific investor's MOIC matches manual calculation).
 
 ## 5. Deliverables & Communication (Communication - 10%, Roadmap - 20%)
