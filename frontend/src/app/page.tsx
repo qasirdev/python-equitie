@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2, Mic, MicOff } from "lucide-react";
+import { Send, Loader2, Activity, User, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2, Mic, MicOff } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant" | "system" | "tool";
@@ -27,17 +27,20 @@ export default function Home() {
 
   // Voice input state
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const [isSpeechSupported, setIsSpeechSupported] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     // Initialize Web Speech API
     if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recognition.onresult = (event: any) => {
           let transcript = "";
           for (let i = 0; i < event.results.length; i++) {
@@ -51,6 +54,8 @@ export default function Home() {
         recognition.onerror = () => setIsListening(false);
 
         recognitionRef.current = recognition;
+        // eslint-disable-next-line
+        setIsSpeechSupported(true);
       }
     }
   }, []);
@@ -90,7 +95,11 @@ export default function Home() {
 
   // Reset chat whenever the selected investor changes
   useEffect(() => {
-    clearChat();
+    // eslint-disable-next-line
+    setMessages([]);
+    setUsage({ prompt: 0, completion: 0 });
+    setToolCalls([]);
+    setLatency(0);
   }, [selectedInvestor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,7 +165,7 @@ export default function Home() {
             } else if (data.type === "error") {
               setMessages((prev) => [...prev, { role: "assistant", content: `**Error:** ${data.message}` }]);
             }
-          } catch (_err) {
+          } catch (_err) { // eslint-disable-line
             // not valid JSON, ignore
           }
         }
@@ -390,7 +399,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={toggleListen}
-                disabled={isLoading || !selectedInvestor || !recognitionRef.current}
+                disabled={isLoading || !selectedInvestor || !isSpeechSupported}
                 className={`aspect-square rounded-xl flex items-center justify-center transition-all shadow-md ${
                   isListening
                     ? "bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse hover:bg-red-500/30"
