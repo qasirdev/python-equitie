@@ -2,6 +2,7 @@
 
 setup:
 	uv sync
+	uv run pre-commit install
 
 dev:
 	uv run uvicorn backend.main:app --reload

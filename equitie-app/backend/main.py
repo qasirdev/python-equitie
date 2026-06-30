@@ -1,13 +1,17 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from typing import AsyncGenerator
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from .settings import settings
-from .logging_config import logger
+from fastapi.responses import JSONResponse
+
 from .api.router import router as api_router
+from .logging_config import logger
+from .settings import settings
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting API", environment=settings.environment)
     yield
     logger.info("Shutting down API")
@@ -29,3 +33,9 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api/v1")
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger.error("Unhandled Exception", exc_info=exc, path=request.url.path)
+    return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})

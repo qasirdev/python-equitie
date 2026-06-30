@@ -1,9 +1,12 @@
-import structlog
 import logging
+from typing import Any
+
+import structlog
+
 from .settings import settings
 
 
-def setup_logging():
+def setup_logging() -> Any:
     # Basic standard logging config to catch third party logs
     logging.basicConfig(
         level=settings.log_level.upper(),

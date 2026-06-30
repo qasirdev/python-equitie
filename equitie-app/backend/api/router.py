@@ -1,5 +1,5 @@
-from fastapi import APIRouter
 import structlog
+from fastapi import APIRouter
 
 logger = structlog.get_logger("equitie_backend.api")
 
@@ -7,6 +7,6 @@ router = APIRouter()
 
 
 @router.get("/health")
-def health_check():
+def health_check() -> dict[str, str]:
     logger.info("Health check endpoint called", trace_id="system")
     return {"status": "ok"}
