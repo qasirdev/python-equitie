@@ -23,13 +23,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy python deps
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+# Install dependencies without installing the project yet (perfect caching)
+RUN uv sync --frozen --no-dev --no-install-project
 
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Copy backend
 COPY backend/ ./backend/
-# COPY data/ ./data/
+# Sync the project itself (non-editable for production)
+RUN uv sync --frozen --no-dev --no-editable
 
 # Copy frontend static build (uncomment when Next.js is added)
 # COPY --from=frontend-builder /app/frontend/out /usr/share/nginx/html
