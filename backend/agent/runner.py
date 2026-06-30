@@ -32,10 +32,11 @@ client = AsyncOpenAI(
     base_url=os.getenv("OPENAI_BASE_URL")
     or os.getenv("OPENROUTER_BASE_URL", "https://api.openai.com/v1"),
 )
-MODEL_NAME = (
+MODEL_NAME: str = (
     os.getenv("LLM_OPENROUTER_MODELS")
     or os.getenv("LLM_PRIMARY_MODEL")
-    or os.getenv("LLM_MODEL", "gpt-4o-mini")
+    or os.getenv("LLM_MODEL")
+    or "gpt-4o-mini"
 )
 
 
