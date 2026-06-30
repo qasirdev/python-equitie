@@ -1,4 +1,4 @@
-.PHONY: setup dev test lint format check build up down
+.PHONY: setup dev test lint format check build up down clean
 
 setup:
 	uv sync
@@ -27,3 +27,9 @@ up:
 
 down:
 	./scripts/stop.sh
+
+clean:
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name ".mypy_cache" -exec rm -rf {} +
+	find . -type d -name ".ruff_cache" -exec rm -rf {} +
+	find . -type d -name ".pytest_cache" -exec rm -rf {} +
