@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles } from "lucide-react";
+import { Send, Loader2, Activity, User, Info, FileText, ChevronRight, Zap, Database, BarChart3, Clock, Sparkles, Trash2 } from "lucide-react";
 
 type Message = {
   role: "user" | "assistant" | "system" | "tool";
@@ -27,7 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch investors for dropdown
-    fetch("http://127.0.0.1:8000/api/v1/investors")
+    fetch("/api/v1/investors")
       .then((res) => res.json())
       .then((data) => setInvestors(data))
       .catch((err) => console.error("Failed to load investors", err));
@@ -36,6 +36,18 @@ export default function Home() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const clearChat = () => {
+    setMessages([]);
+    setUsage({ prompt: 0, completion: 0 });
+    setToolCalls([]);
+    setLatency(0);
+  };
+
+  // Reset chat whenever the selected investor changes
+  useEffect(() => {
+    clearChat();
+  }, [selectedInvestor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +66,7 @@ export default function Home() {
     const startTime = Date.now();
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/v1/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -236,6 +248,16 @@ export default function Home() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative z-10 bg-slate-900/30 backdrop-blur-md">
+        {messages.length > 0 && (
+          <button
+            onClick={clearChat}
+            className="absolute top-6 right-8 p-2 px-3 bg-slate-800/80 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 rounded-xl transition-all shadow-sm z-50 flex items-center gap-2 text-xs font-semibold animate-fade-in"
+            title="Reset Chat"
+          >
+            <Trash2 className="h-4 w-4" /> Reset Chat
+          </button>
+        )}
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 custom-scrollbar">
           {messages.length === 0 ? (
@@ -309,7 +331,7 @@ export default function Home() {
         </div>
 
         {/* Input Area */}
-        <div className="p-6 md:p-8 bg-slate-900/80 backdrop-blur-xl border-t border-white/10 relative z-20">
+        <div className="p-4 md:p-6 bg-slate-900/80 backdrop-blur-xl border-t border-white/10 relative z-20">
           <form onSubmit={handleSubmit} className="flex gap-4 max-w-4xl mx-auto relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
             <input

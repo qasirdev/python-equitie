@@ -5,8 +5,10 @@ services:
       - "80:80"
     volumes:
       - ./backend:/app/backend
-      - ./data:/app/data
+      - "./EquiTie - Senior Software Engineer - Case Study/data:/app/data"
       - ./.env:/app/.env
+    env_file:
+      - ./.env
     environment:
       - ENVIRONMENT=development
     healthcheck:
