@@ -19,7 +19,9 @@ def get_fx_rate_series(currencies: pd.Series) -> pd.Series:
 def convert_currency_vectorized(
     amounts: pd.Series, from_currencies: pd.Series, to_currencies: pd.Series
 ) -> pd.Series:
-    """Converts a Series of amounts from one currency to another using vectorized ops."""
+    """
+    Converts a Series of amounts from one currency to another using vectorized ops.
+    """
     from_usd_rates = get_fx_rate_series(from_currencies)
     to_usd_rates = get_fx_rate_series(to_currencies)
 

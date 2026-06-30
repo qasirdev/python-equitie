@@ -1,7 +1,6 @@
+from typing import Any, Dict
+
 from .loader import data_store
-
-
-from typing import Dict, Any
 
 
 def build_personalisation_profile(investor_id: str) -> Dict[str, Any]:
@@ -47,13 +46,26 @@ def build_personalisation_profile(investor_id: str) -> Dict[str, Any]:
     is_tech_savvy = str(profile["tech_savviness"]).lower() == "high"
 
     if is_tech_savvy:
-        tone = "Concise and data-dense. Use industry standard terminology like MOIC, DPI, Carry, and TVPI without over-explaining."
+        tone = (
+            "Concise and data-dense. Use industry standard terminology like MOIC, "
+            "DPI, Carry, and TVPI without over-explaining."
+        )
     elif is_older:
-        tone = "Respectful, clear, and plain language. Avoid jargon. Explain terms like 'MOIC' (Multiple on Invested Capital) or 'Carry' (Performance Fee) in simple terms if used."
+        tone = (
+            "Respectful, clear, and plain language. Avoid jargon. Explain terms like "
+            "'MOIC' (Multiple on Invested Capital) or 'Carry' (Performance Fee) in "
+            "simple terms if used."
+        )
     else:
-        tone = "Professional and balanced. Clear language, avoiding overly complex financial jargon without being patronising."
+        tone = (
+            "Professional and balanced. Clear language, avoiding overly complex "
+            "financial jargon without being patronising."
+        )
 
-    guidance = f"Tone: {tone} Contextualize answers by acknowledging their {profile['deal_count']} investments"
+    guidance = (
+        f"Tone: {tone} Contextualize answers by acknowledging their "
+        f"{profile['deal_count']} investments"
+    )
     if profile["top_sectors"]:
         sectors_str = ", ".join(str(s) for s in profile["top_sectors"])
         guidance += f", heavily weighted towards {sectors_str}."

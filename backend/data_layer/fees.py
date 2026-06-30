@@ -1,9 +1,8 @@
+from typing import Any, Dict
+
 import pandas as pd
 
 from .loader import data_store
-
-
-from typing import Dict, Any
 
 
 def calculate_effective_fee(deal_id: str, investor_id: str) -> Dict[str, Any]:

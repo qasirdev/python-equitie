@@ -10,30 +10,35 @@ loader = DataLoader(str(mock_data_dir))
 loader.load_all()
 
 # Patch the global data_store in all modules
-import backend.data_layer.loader
+import backend.data_layer.loader  # noqa: E402
 
 backend.data_layer.loader.data_store = loader
 
-import backend.data_layer.fx
+import backend.data_layer.fx  # noqa: E402
 
 backend.data_layer.fx.data_store = loader
 
-import backend.data_layer.metrics
+import backend.data_layer.metrics  # noqa: E402
 
 backend.data_layer.metrics.data_store = loader
 
-import backend.data_layer.fees
+import backend.data_layer.fees  # noqa: E402
 
 backend.data_layer.fees.data_store = loader
 
-import backend.data_layer.personalisation
+import backend.data_layer.personalisation  # noqa: E402
 
 backend.data_layer.personalisation.data_store = loader
 
-from backend.data_layer.fees import calculate_effective_fee
-from backend.data_layer.fx import convert_currency_vectorized, get_fx_rate_series
-from backend.data_layer.metrics import calculate_investor_metrics
-from backend.data_layer.personalisation import build_personalisation_profile
+from backend.data_layer.fees import calculate_effective_fee  # noqa: E402
+from backend.data_layer.fx import (  # noqa: E402
+    convert_currency_vectorized,
+    get_fx_rate_series,
+)
+from backend.data_layer.metrics import calculate_investor_metrics  # noqa: E402
+from backend.data_layer.personalisation import (  # noqa: E402
+    build_personalisation_profile,  # noqa: E402
+)
 
 
 def test_loader_loads_data():
