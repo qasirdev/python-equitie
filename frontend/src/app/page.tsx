@@ -177,7 +177,7 @@ export default function Home() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Sidebar / Observability */}
-      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl pt-6">
+      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl pt-24">
         <div className="p-6 border-b border-white/5 bg-gradient-to-br from-slate-800/40 to-slate-900/40">
           <h1 className="text-2xl font-bold flex items-center gap-3 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
             <Sparkles className="text-cyan-400 h-6 w-6" /> EquiTie
