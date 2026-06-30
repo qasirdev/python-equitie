@@ -14,6 +14,9 @@ from .settings import settings
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting API", environment=settings.environment)
+    from .data_layer.loader import data_store
+
+    data_store.load_all()
     yield
     logger.info("Shutting down API")
 
