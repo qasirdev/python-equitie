@@ -11,6 +11,55 @@ type Message = {
   name?: string;
 };
 
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
+interface SpeechRecognitionEventMap {
+  result: SpeechRecognitionEvent;
+  start: Event;
+  end: Event;
+  error: SpeechRecognitionErrorEvent;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+declare class SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
 export default function Home() {
   const [investors, setInvestors] = useState<{ investor_id: string; investor_name: string }[]>([]);
   const [selectedInvestor, setSelectedInvestor] = useState<string>("INV-001");
