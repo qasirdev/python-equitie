@@ -23,7 +23,7 @@ export default function Home() {
   const [usage, setUsage] = useState({ prompt: 0, completion: 0 });
   const [toolCalls, setToolCalls] = useState<{function: string, arguments: string}[]>([]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Voice input state
   const [isListening, setIsListening] = useState(false);
@@ -73,7 +73,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, [messages]);
 
   const clearChat = () => {
@@ -177,7 +182,7 @@ export default function Home() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Sidebar / Observability */}
-      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl pt-24">
+      <div className="w-80 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col z-10 shadow-2xl">
         <div className="p-6 border-b border-white/5 bg-gradient-to-br from-slate-800/40 to-slate-900/40">
           <h1 className="text-2xl font-bold flex items-center gap-3 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
             <Sparkles className="text-cyan-400 h-6 w-6" /> EquiTie
@@ -298,7 +303,7 @@ export default function Home() {
         )}
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 pt-24 md:p-10 md:pt-24 space-y-8 custom-scrollbar">
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 pt-24 md:p-10 md:pt-24 space-y-8 custom-scrollbar">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-6 max-w-lg mx-auto text-center">
               <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-5 rounded-3xl border border-cyan-500/20 shadow-lg shadow-cyan-500/10 mb-4 animate-float">
@@ -366,7 +371,6 @@ export default function Home() {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} className="h-px" />
         </div>
 
         {/* Input Area */}
