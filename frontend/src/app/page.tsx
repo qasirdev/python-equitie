@@ -18,12 +18,7 @@ declare global {
   }
 }
 
-interface SpeechRecognitionEventMap {
-  result: SpeechRecognitionEvent;
-  start: Event;
-  end: Event;
-  error: SpeechRecognitionErrorEvent;
-}
+
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;

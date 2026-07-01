@@ -413,7 +413,7 @@ Pipeline defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — r
 │ uv sync     │ npm ci                   │ (needs both)   │
 │ ruff format │ npm run lint             │                │
 │ ruff check  │ npm run test             │ docker compose │
-│ mypy        │ npm run build            │ build app      │
+│ mypy .      │ npm run build            │ build app      │
 │ pip-audit   │                          │                │
 │ pytest      │                          │                │
 └─────────────┴──────────────────────────┴────────────────┘

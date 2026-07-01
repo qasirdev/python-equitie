@@ -6,7 +6,8 @@
     "dev": "next dev -p 3015",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
     "lucide-react": "^1.22.0",

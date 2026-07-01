@@ -5,7 +5,11 @@ import pandas as pd
 from backend.data_layer.loader import DataLoader
 
 # Create a mock data store for tests
-mock_data_dir = Path("EquiTie - Senior Software Engineer - Case Study/data")
+mock_data_dir = (
+    Path(__file__).parents[2]
+    / "EquiTie - Senior Software Engineer - Case Study"
+    / "data"
+)
 loader = DataLoader(str(mock_data_dir))
 loader.load_all()
 
@@ -16,19 +20,19 @@ backend.data_layer.loader.data_store = loader
 
 import backend.data_layer.fx  # noqa: E402
 
-backend.data_layer.fx.data_store = loader
+backend.data_layer.fx.data_store = loader  # type: ignore[attr-defined]
 
 import backend.data_layer.metrics  # noqa: E402
 
-backend.data_layer.metrics.data_store = loader
+backend.data_layer.metrics.data_store = loader  # type: ignore[attr-defined]
 
 import backend.data_layer.fees  # noqa: E402
 
-backend.data_layer.fees.data_store = loader
+backend.data_layer.fees.data_store = loader  # type: ignore[attr-defined]
 
 import backend.data_layer.personalisation  # noqa: E402
 
-backend.data_layer.personalisation.data_store = loader
+backend.data_layer.personalisation.data_store = loader  # type: ignore[attr-defined]
 
 from backend.data_layer.fees import calculate_effective_fee  # noqa: E402
 from backend.data_layer.fx import (  # noqa: E402
@@ -41,12 +45,12 @@ from backend.data_layer.personalisation import (  # noqa: E402
 )
 
 
-def test_loader_loads_data():
+def test_loader_loads_data() -> None:
     assert not loader.investors.empty, "Investors should be loaded"
     assert not loader.fx_rates.empty, "FX rates should be loaded"
 
 
-def test_fx_conversion():
+def test_fx_conversion() -> None:
     # USD to USD
     amounts = pd.Series([100.0, 200.0])
     from_curr = pd.Series(["USD", "USD"])
@@ -62,7 +66,7 @@ def test_fx_conversion():
     assert result.iloc[0] == 100.0 * gbp_rate
 
 
-def test_calculate_investor_metrics():
+def test_calculate_investor_metrics() -> None:
     # Pick the first investor
     investor_id = loader.investors.iloc[0]["investor_id"]
     metrics = calculate_investor_metrics(investor_id)
@@ -78,7 +82,7 @@ def test_calculate_investor_metrics():
     assert metrics["moic"] >= 0
 
 
-def test_calculate_effective_fee():
+def test_calculate_effective_fee() -> None:
     # Pick a deal and an investor
     if not loader.allocations.empty:
         alloc = loader.allocations.iloc[0]
@@ -90,7 +94,7 @@ def test_calculate_effective_fee():
         assert isinstance(fees["discount_applied"], bool)
 
 
-def test_build_personalisation_profile():
+def test_build_personalisation_profile() -> None:
     # Pick the first investor
     investor_id = loader.investors.iloc[0]["investor_id"]
     profile = build_personalisation_profile(investor_id)
