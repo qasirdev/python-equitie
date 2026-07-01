@@ -1,4 +1,4 @@
-# Implementation Plan — AI Daily Briefing Assistant
+# Implementation Plan — AI Investor Assistant
 
 **Version:** 1.5.0 | **Last Updated:** May 2026
 

@@ -4,7 +4,7 @@ globs: ["**/tests/**/*.py", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**
 alwaysApply: false
 ---
 
-# Testing Agent Rules — AI Daily Briefing Assistant
+# Testing Agent Rules — AI Investor Assistant
 
 ## Scope
 
@@ -135,7 +135,7 @@ When adding or removing test functions, classes, or parametrized cases under `ba
    - `README.md` (badge, tech stack table, tree diagram, quick-start comments)
    - `backend/AGENT.md`
    - `AGENT.md`
-   - `007-01-ai-daily-briefing-assistant-v2.0.0.md`
+   - `proposal-case-study.md`
 3. Update any prose that cites the total test count (e.g. "1193 automated tests", `uv run pytest # N tests`)
 4. Run `uv run pytest backend/tests/test_suite_inventory.py` — must pass before merge
 
@@ -154,7 +154,7 @@ When adding or removing vectors in `backend/tests/security/test_injection_payloa
    - `docs/SECURITY.md` (inventory table + marker)
    - `README.md`
    - `backend/AGENT.md`
-   - `007-01-ai-daily-briefing-assistant-v2.0.0.md`
+   - `proposal-case-study.md`
 3. Update any prose that cites payload or pattern counts (e.g. "285-vector", "277 patterns")
 4. Run `uv run pytest backend/tests/security/test_corpus_inventory.py` — must pass before merge
 

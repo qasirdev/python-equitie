@@ -763,7 +763,7 @@ limiter = Limiter(key_func=get_remote_address)
 @app.post("/api/v1/briefing/generate")
 @limiter.limit("10/minute")
 async def generate_briefing(request: Request) -> dict[str, str]:
-    """Generate daily briefing with rate limiting.
+    """Generate EquiTie briefing with rate limiting.
 
     Limited to 10 requests per minute per IP address. Exceeding this
     limit returns 429 status with Retry-After header.

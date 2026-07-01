@@ -4,7 +4,7 @@ globs: ["**/*.py", "**/*.ts", "**/*.tsx"]
 alwaysApply: false
 ---
 
-# Refactor Agent Rules — AI Daily Briefing Assistant
+# Refactor Agent Rules — AI Investor Assistant
 
 ## Scope
 

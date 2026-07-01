@@ -15,7 +15,7 @@
 
 ## 🎯 Why Security is Central to This Project
 
-AI daily briefings are uniquely vulnerable. They aggregate **your most sensitive daily context** — tasks, meetings, priorities — from multiple sources. Third-party calendar invites become attack vectors. LLM outputs can carry injected content. Cloud models can leak PII.
+EquiTie AI briefings are uniquely vulnerable. They aggregate **your most sensitive daily context** — tasks, meetings, priorities — from multiple sources. Third-party calendar invites become attack vectors. LLM outputs can carry injected content. Cloud models can leak PII.
 
 This document describes how every one of those risks is handled — not theoretically, but with **implemented, tested, production-deployed controls**.
 
@@ -398,7 +398,7 @@ Violations emit `rate_limit_exceeded` events with endpoint, client host, and `Re
 
 ### The Privacy Problem
 
-Daily briefings inherently contain sensitive personal information — your email addresses, phone numbers, meeting attendees' details. Sending this data to a cloud LLM creates a privacy risk and may violate GDPR.
+EquiTie AI briefings inherently contain sensitive personal information — your email addresses, phone numbers, meeting attendees' details. Sending this data to a cloud LLM creates a privacy risk and may violate GDPR.
 
 ### Data Classification
 
@@ -527,7 +527,7 @@ sequenceDiagram
     participant Backend
     participant MCP as Calendar MCP (stdio)
 
-    User->>Frontend: Request daily briefing
+    User->>Frontend: Request EquiTie AI briefing
     Frontend->>Google: OAuth redirect
     Google->>Consent: JIT consent prompt — time-bounded
     Consent->>Backend: Token exchange

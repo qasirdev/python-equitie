@@ -4,7 +4,7 @@ globs: ["**/*.md", "**/AGENT.md", "**/README.md", "**/CHANGELOG.md", "docs/**/*"
 alwaysApply: false
 ---
 
-# Documentation Agent Rules — AI Daily Briefing Assistant
+# Documentation Agent Rules — AI Investor Assistant
 
 ## Scope
 
@@ -19,7 +19,7 @@ This rule set governs all documentation activities including domain-specific AGE
 Every major directory (`frontend/`, `backend/`, `prompts/`, `backend/agents/*/`) MUST have an `AGENT.md` with this structure:
 
 ```markdown
-# [Component Name] — AI Daily Briefing Assistant
+# [Component Name] — AI Investor Assistant
 
 ## Scope
 Brief description of what this directory/component governs.
@@ -88,7 +88,7 @@ When tests are added or removed under `backend/tests/`, update counts in **all**
 | `README.md` | Tests badge, feature bullets, tech stack table, tree diagram, quick-start comments + marker |
 | `backend/AGENT.md` | Testing Requirements section + marker |
 | `AGENT.md` | Workflow rule reference + marker |
-| `007-01-ai-daily-briefing-assistant-v2.0.0.md` | Marker (near input-security section) |
+| `proposal-case-study.md` | Marker (near input-security section) |
 | `SECURITY.md` (root) | Pointer to inventory (if counts cited) |
 
 Verify with: `uv run pytest backend/tests/test_suite_inventory.py`
@@ -104,7 +104,7 @@ When security test vectors change, update counts in **all** of:
 | `docs/SECURITY.md` | Regression corpus inventory table + `<!-- corpus-inventory:payloads=N,patterns=M -->` |
 | `README.md` | Security posture section counts + marker |
 | `backend/AGENT.md` | Prompt injection section counts + marker |
-| `007-01-ai-daily-briefing-assistant-v2.0.0.md` | Input security layer table + marker |
+| `proposal-case-study.md` | Input security layer table + marker |
 | `SECURITY.md` (root) | Pointer to inventory (if counts cited) |
 | `docs/learning/week6-owasp-agent-governance.md` | Corpus references (if counts cited) |
 
